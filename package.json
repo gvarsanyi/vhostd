@@ -1,0 +1,25 @@
+{
+  "name": "vhostd",
+  "version": "0.2.0",
+  "description": "virtualhost/proxy daemon",
+  "main": "js/vhostd.js",
+  "dependencies": {
+    "http-proxy": "~0.10.4"
+  },
+  "bin": {
+    "vhostd" : "./js/vhostd.js"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/gvarsanyi/vhostd.git"
+  },
+  "author": "Greg Varsanyi",
+  "license": "GNU GPLv2",
+  "bugs": {
+    "url": "https://github.com/gvarsanyi/vhostd/issues"
+  },
+  "homepage": "https://github.com/gvarsanyi/vhostd"
+}
