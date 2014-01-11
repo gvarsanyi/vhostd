@@ -6,7 +6,7 @@ Virtualhost proxy server
     sudo npm install -g vhostd
 
 # Edit configuration file:
-    sudo nano `npm prefix -g`/lib/node_modules/vhosts/config.json
+    sudo nano `npm prefix -g`/lib/node_modules/vhostd/config.json
 ## Example config.json:
     {
       "port": 80,
