@@ -15,7 +15,7 @@
       };
     };
     requested_host = (req.headers.host + ':').split(':')[0];
-    _ref = config.targets;
+    _ref = config.getTargets();
     for (target in _ref) {
       data = _ref[target];
       if (data === requested_host) {

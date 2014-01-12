@@ -7,7 +7,7 @@ module.exports = (req) ->
 
   requested_host = (req.headers.host + ':').split(':')[0]
 
-  for target, data of config.targets
+  for target, data of config.getTargets()
     if data is requested_host
       return new Target target
     else if typeof data is 'object' # list of vhosts

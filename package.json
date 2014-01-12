@@ -1,6 +1,6 @@
 {
   "name": "vhostd",
-  "version": "0.2.1",
+  "version": "0.3.0",
   "description": "virtualhost/proxy daemon",
   "main": "js/vhostd.js",
   "dependencies": {
