@@ -1,6 +1,6 @@
-config = require './config'
-log    = require './log'
-stderr = require './stderr'
+config     = require './config'
+server_log = require './server_log'
+stderr     = require './stderr'
 
 module.exports = (req, res, proxy) ->
   try
@@ -8,7 +8,7 @@ module.exports = (req, res, proxy) ->
     target = config.getTarget requested_host
  
     if target?.host and target?.port
-      log req, target
+      server_log req, target
       proxy.proxyRequest req, res, target
     else
       res.writeHead 404, 'Content-Type': 'text/plain'

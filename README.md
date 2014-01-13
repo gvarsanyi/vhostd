@@ -23,4 +23,9 @@ Virtualhost proxy server
     port = 8000
 
 # Run
-    sudo vhostd
+    sudo vhostd [start|stop|restart|status]
+Run without a task directive and it will attempt a soft start - e.g. will not
+restart if there is a process already running.
+
+# Log
+    /var/log/vhostd

@@ -2,9 +2,9 @@ require './require-root'
 
 fs         = require 'fs'
 httpProxy  = require 'http-proxy'
-config     = require '../config'
-http_route = require '../http_route'
-ws_route   = require '../ws_route'
+config     = require '../lib/config'
+http_route = require '../lib/http_route'
+ws_route   = require '../lib/ws_route'
 
 server            = null
 restart_requested = null

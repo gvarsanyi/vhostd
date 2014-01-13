@@ -8,11 +8,11 @@
 
   httpProxy = require('http-proxy');
 
-  config = require('../config');
+  config = require('../lib/config');
 
-  http_route = require('../http_route');
+  http_route = require('../lib/http_route');
 
-  ws_route = require('../ws_route');
+  ws_route = require('../lib/ws_route');
 
   server = null;
 

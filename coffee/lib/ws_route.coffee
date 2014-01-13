@@ -1,6 +1,6 @@
-config = require './config'
-log    = require './log'
-stderr = require './stderr'
+config     = require './config'
+server_log = require './log'
+stderr     = require './stderr'
 
 module.exports = (req, socket, head) ->
   try
@@ -8,7 +8,7 @@ module.exports = (req, socket, head) ->
     target = config.getTarget requested_host
 
     if target?.host and target?.port
-      log req, target, 'ws'
+      server_log req, target, 'ws'
       server.proxy.proxyWebSocketRequest req, socket, head, target
     else
       throw new Error 'No valid target for websocket' # or just let it die
