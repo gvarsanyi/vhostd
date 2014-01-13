@@ -1,5 +1,6 @@
-fs        = require 'fs'
-iniparser = require 'iniparser'
+child_process = require 'child_process'
+fs            = require 'fs'
+iniparser     = require 'iniparser'
 
 stderr = require './stderr'
 
@@ -38,8 +39,9 @@ validate_port = (port) ->
 load = ->
   watcher.close() if watcher
   try watcher = fs.watch file_name, (event) ->
-    suspend 'config file changed'
-    load()
+    suspend 'config file changed, restarting'
+    child_process.exec 'nohup vhostd restart > /dev/null 2>&1 &'
+    process.exit 0
 
   fs.readFile file_name, encoding: 'utf8', (err, data) ->
     return suspend(err) if err
@@ -100,7 +102,7 @@ fs.exists file_name, (exists) ->
   cfg_str = '[SERVER]\nport = 80\n\n' +
             '[example.com]\naddress = 127.0.0.1\nport = 8000\n\n' +
             '[alias.example.com]\nref = example.com\n\n' +
-            '[other.com]\naddress = 127.0.0.1\nport = 8000\n'
+            '[other.com]\naddress = 127.0.0.1\nport = 9000\n'
 
   fs.writeFile file_name, cfg_str, encoding: 'utf8', (err) ->
     if err

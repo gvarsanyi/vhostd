@@ -21,6 +21,7 @@ Virtualhost proxy server
     [other.com]
     address = 127.0.0.1
     port = 8000
+Config file /etc/vhostd.ini is watched by the server, changes trigger a reload.
 
 # Run
     sudo vhostd [start|stop|restart|status]
