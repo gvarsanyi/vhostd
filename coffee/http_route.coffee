@@ -1,10 +1,12 @@
-get_target = require './get_target'
-log        = require './log'
+config = require './config'
+log    = require './log'
+stderr = require './stderr'
 
 module.exports = (req, res, proxy) ->
   try
-    target = get_target req
-
+    requested_host = String(req?.headers?.host + ':').split(':')[0]
+    target = config.getTarget requested_host
+ 
     if target?.host and target?.port
       log req, target
       proxy.proxyRequest req, res, target
@@ -12,6 +14,6 @@ module.exports = (req, res, proxy) ->
       res.writeHead 404, 'Content-Type': 'text/plain'
       res.write 'Missing page\n'
       res.end()
-      console.log '    TARGET ERROR', req.headers
+      stderr 'TARGET ERROR:', JSON.stringify req.headers
   catch err
-    console.log '    ERROR: ', err
+    stderr 'ERROR:', JSON.stringify err

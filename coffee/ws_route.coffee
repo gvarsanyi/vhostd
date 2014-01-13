@@ -1,9 +1,11 @@
-get_target = require './get_target'
-log        = require './log'
+config = require './config'
+log    = require './log'
+stderr = require './stderr'
 
 module.exports = (req, socket, head) ->
   try
-    target = get_target req
+    requested_host = String(req?.headers?.host + ':').split(':')[0]
+    target = config.getTarget requested_host
 
     if target?.host and target?.port
       log req, target, 'ws'
@@ -11,4 +13,4 @@ module.exports = (req, socket, head) ->
     else
       throw new Error 'No valid target for websocket' # or just let it die
   catch err
-    console.log '    WS-ERROR: ', JSON.stringify(err)
+    stderr 'ERROR:', JSON.stringify err

@@ -6,15 +6,21 @@ Virtualhost proxy server
     sudo npm install -g vhostd
 
 # Edit configuration file:
-    sudo nano /etc/vhostd.json
+    sudo nano /etc/vhostd.ini
 ## Example config.json:
-    {
-      "port": 80,
-      "targets": {
-        "127.0.0.1:8080": "unique.project.com",
-        "127.0.0.1:9080": ["www.coolstuff.com", "coolstuff.com"]
-      }
-    }
+    [SERVER]
+    port = 80
+    
+    [example.com]
+    address = 127.0.0.1
+    port    = 8000
+    
+    [alias.example.com]
+    ref = example.com
+    
+    [other.com]
+    address = 127.0.0.1
+    port = 8000
 
 # Run
     sudo vhostd

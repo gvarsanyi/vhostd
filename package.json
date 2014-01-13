@@ -1,13 +1,14 @@
 {
   "name": "vhostd",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "description": "virtualhost/proxy daemon",
   "main": "js/vhostd.js",
   "dependencies": {
-    "http-proxy": "~0.10.4"
+    "http-proxy": "~0.10.4",
+    "iniparser": "~1.0.5"
   },
   "bin": {
-    "vhostd" : "./js/vhostd.js"
+    "vhostd": "./js/vhostd.js"
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
