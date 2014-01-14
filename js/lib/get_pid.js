@@ -5,7 +5,7 @@
   child_process = require('child_process');
 
   module.exports = function(callback) {
-    return child_process.exec('ps aux', function(err, stdout, stderr) {
+    return child_process.exec('ps aux', function(err, stdout) {
       var line, pid, pid_line, _i, _len, _ref;
       if (err) {
         return callback(err);

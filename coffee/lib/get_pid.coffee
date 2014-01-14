@@ -1,8 +1,7 @@
-
 child_process = require 'child_process'
 
 module.exports = (callback) ->
-  child_process.exec 'ps aux', (err, stdout, stderr) ->
+  child_process.exec 'ps aux', (err, stdout) ->
     return callback(err) if err
 
     for line in stdout.split '\n'

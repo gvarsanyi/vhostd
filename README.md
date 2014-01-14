@@ -19,8 +19,15 @@ Virtualhost proxy server
     ref = example.com
     
     [other.com]
-    address = 127.0.0.1
+    address = 192.168.105.1, 192.168.105.2, 192.168.105.3
     port = 8000
+    
+    [something.com]
+    address = 192.168.110.50, 192.168.110.51
+    port = 8200, 18200
+
+    [www.something.com]
+    ref = something.com
 Config file /etc/vhostd.ini is watched by the server, changes trigger a reload.
 
 # Run

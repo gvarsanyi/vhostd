@@ -2,6 +2,7 @@ child_process = require 'child_process'
 fs            = require 'fs'
 iniparser     = require 'iniparser'
 
+log    = require './log'
 stderr = require './stderr'
 
 file_name = '/etc/vhostd.ini'
@@ -13,15 +14,26 @@ start_event_bindings = []
 stop_event_bindings  = []
 watcher              = null
 
-module.exports =
-  attachStartEvent: (callback) -> start_event_bindings.push callback
-  attachStopEvent: (callback) -> stop_event_bindings.push callback
-  getPort: -> server_port
-  getTarget: (hostname) -> config[hostname]
-  isRunnable: -> not suspended
+module.exports.attachStartEvent = (callback) ->
+  start_event_bindings.push callback
+
+module.exports.attachStopEvent = (callback) ->
+  stop_event_bindings.push callback
+
+module.exports.getPort = ->
+  server_port
+
+module.exports.getTarget = (hostname) ->
+  target = config[hostname].shift()
+  config[hostname].push target
+  target
+
+module.exports.isRunnable = ->
+  not suspended
+
 
 suspend = (reason) ->
-  console.log '[' + (new Date).toUTCString() + '] Suspending for: ' + reason
+  log 'suspending:', reason
   was_suspended = suspended
   suspended = reason
   unless was_suspended
@@ -39,9 +51,20 @@ validate_port = (port) ->
 load = ->
   watcher.close() if watcher
   try watcher = fs.watch file_name, (event) ->
-    suspend 'config file changed, restarting'
-    child_process.exec 'nohup vhostd restart > /dev/null 2>&1 &'
-    process.exit 0
+    forced_restart = ->
+      suspend 'config file changed, restarting service'
+      child_process.exec 'nohup vhostd restart > /dev/null 2>&1 &'
+      process.exit 0
+
+    fs.readFile file_name, encoding: 'utf8', (err, data) ->
+      return forced_restart() if err
+
+      try
+        inf = iniparser.parseString data
+        return load() if Number(inf?.SERVER?.port) is server_port
+        forced_restart()
+      catch err
+        forced_restart()
 
   fs.readFile file_name, encoding: 'utf8', (err, data) ->
     return suspend(err) if err
@@ -56,28 +79,47 @@ load = ->
     count = 0
     aliases = {}
     config  = {}
-    for target, spec of inf when target isnt 'SERVER'
-      if spec.ref?
-        if spec.address? and spec.port?
-          if validate_port Number spec.port and spec.address.length
-            stderr 'skipping ref from ambiguos target:', target
-            config[target] =
-              host: spec.address
-              port: spec.port
-            count += 1
-          else
-            stderr 'skipping invalid target:', target
-        else
-          aliases[target] = spec.ref
-          if spec.address? or spec.port?
-            stderr 'skipping address/port from ambiguos target:', target
-      else unless validate_port Number spec.port and spec.address.length
-        stderr 'skipping invalid target:', target
+    parse_multi = (target, spec) ->
+      normalize = (str) ->
+        str = String(str).replace(',', ' ').replace('\t', ' ')
+        str = str.replace('  ', ' ') while str.indexOf('  ') > -1
+        str.split ' '
+
+      addrs = normalize spec.address
+      ports = normalize spec.port
+
+      for port in ports
+        unless validate_port Number port
+          stderr 'skipping invalid target:', target
+          return false
+
+      targets = []
+      if addrs.length > 1 and ports.length is 1
+        targets.push({host, port: ports[0]}) for host in addrs
+      else if addrs.length is 1 and ports.length > 1
+        targets.push({host: addrs[0], port}) for port in ports
+      else if addrs.length is 1 and ports.length is 1
+        targets.push {host: addrs[0], port: ports[0]}
       else
-        config[target] =
-          host: spec.address
-          port: spec.port
-        count += 1
+        stderr 'skipping invalid target:', target
+        return false
+
+      config[target] = targets
+      count += 1
+      true
+
+    for target, spec of inf when target isnt 'SERVER'
+      unless spec.ref?
+        parse_multi target, spec
+        continue
+
+      if spec.address? and spec.port?
+        if parse_multi target, spec
+          stderr 'skipping ref from ambiguos target:', target
+      else
+        aliases[target] = spec.ref
+        if spec.address? or spec.port?
+          stderr 'skipping address/port from ambiguos target:', target
 
     found_one = count
     while found_one
@@ -94,6 +136,7 @@ load = ->
     unless count
       return suspend 'no valid target was found'
 
+    log 'config file', file_name, 'loaded'
     resume()
 
 fs.exists file_name, (exists) ->

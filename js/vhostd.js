@@ -18,7 +18,7 @@
     require('./tasks/require-root');
     process.chdir(__dirname);
     cmd = 'nohup ./vhostd-service.js >> /var/log/vhostd 2>&1 &';
-    return child_process.exec(cmd, function(err, stdout, stderr) {
+    return child_process.exec(cmd, function(err) {
       if (err) {
         return stderr('ERROR', err);
       }

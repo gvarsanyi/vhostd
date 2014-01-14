@@ -13,7 +13,7 @@ start = ->
   require './tasks/require-root'
   process.chdir __dirname
   cmd = 'nohup ./vhostd-service.js >> /var/log/vhostd 2>&1 &'
-  child_process.exec cmd, (err, stdout, stderr) ->
+  child_process.exec cmd, (err) ->
     return stderr('ERROR', err) if err
     get_pid (err, pid) ->
       if not err and pid
