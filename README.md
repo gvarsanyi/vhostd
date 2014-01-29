@@ -31,9 +31,16 @@ Virtualhost proxy server
 Config file /etc/vhostd.ini is watched by the server, changes trigger a reload.
 
 # Run
-    sudo vhostd [start|stop|restart|status]
+    sudo vhostd [start|stop|restart]
 Run without a task directive and it will attempt a soft start - e.g. will not
 restart if there is a process already running.
+
+# Check status
+    vhostd status
+
+# Run status to exit value
+    vhostd is-running || sudo vhostd start
+Will trigger service start (and using sudo) only in case service is not running
 
 # Log
     /var/log/vhostd
