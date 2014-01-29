@@ -104,6 +104,8 @@
         return stop(pid);
       case 'status':
         return log('vhostd service is ' + (pid ? 'running: ' + pid : 'stopped'));
+      case 'is-running':
+        return process.exit(pid ? 0 : 1);
       default:
         stderr('[vhostd] unknown task:', task);
         return process.exit(1);

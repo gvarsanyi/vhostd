@@ -70,6 +70,8 @@ get_pid (err, pid) ->
       stop pid
     when 'status'
       log 'vhostd service is ' + (if pid then 'running: ' + pid else 'stopped')
+    when 'is-running'
+      process.exit if pid then 0 else 1
     else
       stderr '[vhostd] unknown task:', task
       process.exit 1
